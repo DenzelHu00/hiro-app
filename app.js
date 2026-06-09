@@ -334,7 +334,7 @@ async function saveSettings(e) {
 
   if (window.HiroPush) {
     const pushResult = await window.HiroPush.syncPushWithSettings(data);
-    updatePushStatusUI(pushResult);
+    await updatePushStatusUI(pushResult);
   }
 
   settingsSaved.hidden = false;
@@ -351,22 +351,59 @@ if (categorySearch) {
 }
 
 const pushStatusEl = document.getElementById("push-status");
+const pushEnableBtn = document.getElementById("push-enable-btn");
 const pushCopySubscriptionBtn = document.getElementById("push-copy-subscription");
 
-function updatePushStatusUI(pushResult) {
+async function updatePushStatusUI(pushResult) {
   if (!pushStatusEl || !window.HiroPush) return;
 
-  pushStatusEl.textContent = window.HiroPush.getPushStatusMessage();
+  const status = await window.HiroPush.refreshPushStatus();
 
   if (pushResult?.reason === "denied") {
-    pushStatusEl.textContent =
-      "Notifications are blocked. Enable them in your browser or phone settings, then save again.";
+    status.state = "denied";
+    status.message =
+      "Notifications are blocked. Enable them in your phone or browser settings, then try again.";
   }
 
-  const hasSubscription = Boolean(window.HiroPush.getLocalSubscriptionJson());
-  if (pushCopySubscriptionBtn) {
-    pushCopySubscriptionBtn.hidden = !hasSubscription;
+  if (pushResult?.reason === "error" && pushResult.message) {
+    status.state = "error";
+    status.message = pushResult.message;
   }
+
+  pushStatusEl.textContent = status.message;
+  pushStatusEl.classList.remove("push-status--enabled", "push-status--warning");
+  if (status.state === "enabled") {
+    pushStatusEl.classList.add("push-status--enabled");
+  } else {
+    pushStatusEl.classList.add("push-status--warning");
+  }
+
+  const subscribed = status.state === "enabled";
+  if (pushEnableBtn) {
+    pushEnableBtn.hidden = subscribed;
+  }
+  if (pushCopySubscriptionBtn) {
+    pushCopySubscriptionBtn.hidden = !subscribed;
+  }
+}
+
+async function enablePushNotifications() {
+  if (!window.HiroPush) return;
+
+  const settings = getFormSettings();
+  if (!window.HiroPush.wantsAnyNotifications(settings)) {
+    pushStatusEl.textContent =
+      "Turn on at least one notification toggle above, then try again.";
+    pushStatusEl.classList.add("push-status--warning");
+    return;
+  }
+
+  const result = await window.HiroPush.syncPushWithSettings(settings);
+  await updatePushStatusUI(result);
+}
+
+if (pushEnableBtn) {
+  pushEnableBtn.addEventListener("click", () => enablePushNotifications());
 }
 
 if (pushCopySubscriptionBtn) {
@@ -388,12 +425,18 @@ if (pushCopySubscriptionBtn) {
   });
 }
 
-if (window.HiroPush) {
-  window.HiroPush.registerServiceWorker().then(() => updatePushStatusUI());
+async function initPushNotifications() {
+  if (!window.HiroPush) return;
+  await window.HiroPush.registerServiceWorker();
+  const saved = getSavedSettings();
+  if (window.HiroPush.wantsAnyNotifications(saved) && Notification.permission === "granted") {
+    await window.HiroPush.syncPushWithSettings(saved);
+  }
+  await updatePushStatusUI();
 }
 
 loadSettings();
-updatePushStatusUI();
+initPushNotifications();
 
 /* News — pull to refresh & last updated */
 const mainContent = document.getElementById("main-content");
