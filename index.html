@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="Hearts in Rhythm Organization — research, resources, and community for cardiac rhythm health." />
+    <meta name="theme-color" content="#8b1a2e" />
+    <title>HiRO — Hearts in Rhythm Organization</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <div class="header__brand">
+          <img
+            class="logo"
+            src="HiRO Circle Logo.png"
+            alt="HiRO — Hearts in Rhythm Organization"
+            width="56"
+            height="56"
+          />
+          <div class="header__text">
+            <h1 class="header__title">HiRO</h1>
+            <p class="header__subtitle">Hearts in Rhythm Organization</p>
+          </div>
+        </div>
+      </header>
+
+      <main class="main" id="main-content">
+        <!-- News -->
+        <section class="panel panel--active" id="panel-news" role="tabpanel" aria-labelledby="tab-news">
+          <h2 class="panel__heading">News</h2>
+          <p class="panel__intro">Updates from HiRO on research, events, and community announcements.</p>
+          <p class="news-last-updated" id="news-last-updated" aria-live="polite">Last updated: —</p>
+          <div class="news-pull" id="news-pull">
+            <div class="news-pull__indicator" id="news-pull-indicator" aria-hidden="true">
+              <span class="news-pull__icon" id="news-pull-icon"></span>
+              <span class="news-pull__label" id="news-pull-label">Pull down to refresh</span>
+            </div>
+            <ul class="news-list" id="news-list">
+            <li class="news-card">
+              <time class="news-card__date" datetime="2026-06-01">June 1, 2026</time>
+              <h3 class="news-card__title">10th Annual HiRO Symposium — Save the Date</h3>
+              <p class="news-card__excerpt">
+                Join us for the 10th annual Hearts in Rhythm Organization Symposium this fall. Connect with researchers, clinicians, and families to hear the latest on inherited cardiac conditions, genetic testing, and sudden cardiac arrest prevention. Registration opens soon—check back for dates, venue details, and the full program.
+              </p>
+            </li>
+            <li class="news-card">
+              <time class="news-card__date" datetime="2026-05-15">May 15, 2026</time>
+              <h3 class="news-card__title">Welcome to the HiRO app</h3>
+              <p class="news-card__excerpt">Your central place for organization news, patient resources, and study updates. More announcements will appear here as we publish them.</p>
+            </li>
+          </ul>
+          </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="panel" id="panel-resources" role="tabpanel" aria-labelledby="tab-resources" hidden>
+          <h2 class="panel__heading">Resources</h2>
+          <p class="panel__intro">Trusted information and pathways to care, testing, and research participation.</p>
+          <label class="resource-search">
+            <span class="resource-search__label">Search resources</span>
+            <input
+              type="search"
+              class="resource-search__input"
+              id="resource-search"
+              placeholder="Search topics, conditions, links…"
+              autocomplete="off"
+              enterkeyhint="search"
+            />
+          </label>
+          <p class="resource-search__empty" id="resource-search-empty" hidden>No resources match your search.</p>
+          <div class="accordion" id="resources-accordion">
+            <details class="accordion__item">
+              <summary class="accordion__trigger">
+                <span class="accordion__icon" aria-hidden="true">◆</span>
+                Inherited cardiac conditions
+              </summary>
+              <div class="accordion__content">
+                <ul class="link-list">
+                  <li>
+                    <details class="resource-sub">
+                      <summary class="resource-sub__trigger">What are inherited cardiac conditions?</summary>
+                      <div class="resource-sub__content">
+                        <h3 class="resource-sub__heading">What are Inherited Cardiac Conditions?</h3>
+                        <p>
+                          Inherited cardiac conditions, or ICCs, are a group of heart problems that affect the electrical signals, and sometimes muscle function, of the heart. These conditions can be passed from parent to child and may not be recognized until a seemingly healthy individual has a serious heart event that causes loss of consciousness and in some cases death.
+                        </p>
+                        <h4 class="resource-sub__subheading">Signs and symptoms</h4>
+                        <ol class="resource-sub__list">
+                          <li>Fainting spells or dizziness with exercise or emotion</li>
+                          <li>Heart racing or palpitations</li>
+                          <li>Seizures</li>
+                          <li>Fatigue and shortness of breath</li>
+                        </ol>
+                        <h4 class="resource-sub__subheading">Family history of</h4>
+                        <ol class="resource-sub__list">
+                          <li>Sudden cardiac arrest</li>
+                          <li>Sudden cardiac death</li>
+                          <li>Heart failure</li>
+                        </ol>
+                      </div>
+                    </details>
+                  </li>
+                  <li>
+                    <details class="resource-sub">
+                      <summary class="resource-sub__trigger">Common inherited cardiac conditions</summary>
+                      <div class="resource-sub__content">
+                        <h3 class="resource-sub__heading">Common Inherited Cardiac Conditions</h3>
+
+                        <article class="resource-condition">
+                          <h4 class="resource-condition__title">Long QT Syndrome (LQTS)</h4>
+                          <p>
+                            Long QT syndrome affects how long the heart takes to recover electrically between beats. This can lead to dangerous fast heart rhythms, fainting, and in some cases sudden cardiac arrest—often triggered by exercise, emotion, or certain medications.
+                          </p>
+                          <a href="https://www.mayoclinic.org/diseases-conditions/long-qt-syndrome/symptoms-causes/syc-20352518" class="resource-condition__more">More information</a>
+                        </article>
+
+                        <article class="resource-condition">
+                          <h4 class="resource-condition__title">Brugada Syndrome</h4>
+                          <p>
+                            Brugada syndrome is an inherited condition that disrupts the heart’s electrical signals. It is often identified on an ECG and may increase the risk of serious arrhythmias, particularly during sleep, fever, or in some people without symptoms until a cardiac event occurs.
+                          </p>
+                          <a href="#" class="resource-condition__more">More information</a>
+                        </article>
+
+                        <article class="resource-condition">
+                          <h4 class="resource-condition__title">ARVC (Arrhythmogenic Right Ventricular Cardiomyopathy)</h4>
+                          <p>
+                            ARVC is a condition in which heart muscle—especially in the right ventricle—is replaced by fat and scar tissue. This can cause palpitations, fainting, and life-threatening arrhythmias, and may progress to heart failure over time.
+                          </p>
+                          <a href="#" class="resource-condition__more">More information</a>
+                        </article>
+
+                        <article class="resource-condition">
+                          <h4 class="resource-condition__title">CPVT (Catecholaminergic Polymorphic Ventricular Tachycardia)</h4>
+                          <p>
+                            CPVT causes abnormal heart rhythms that are often brought on by exercise or strong emotions. The heart may look structurally normal on standard tests, but affected individuals are at risk of fainting and sudden cardiac arrest during physical activity or stress.
+                          </p>
+                          <a href="#" class="resource-condition__more">More information</a>
+                        </article>
+
+                        <article class="resource-condition">
+                          <h4 class="resource-condition__title">HCM (Hypertrophic Cardiomyopathy)</h4>
+                          <p>
+                            Hypertrophic cardiomyopathy involves thickening of the heart muscle, most commonly the wall between the heart’s chambers. It can cause shortness of breath, chest pain, palpitations, and an increased risk of arrhythmias and sudden cardiac death, even in young, active people.
+                          </p>
+                          <a href="#" class="resource-condition__more">More information</a>
+                        </article>
+                      </div>
+                    </details>
+                  </li>
+                  <li><a href="#" class="link-list__link">Family screening and cascade testing</a></li>
+                  <li><a href="#" class="link-list__link">Living with an inherited cardiac condition</a></li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="accordion__item">
+              <summary class="accordion__trigger">
+                <span class="accordion__icon" aria-hidden="true">◆</span>
+                Sudden cardiac arrest / sudden cardiac death
+              </summary>
+              <div class="accordion__content">
+                <ul class="link-list">
+                  <li><a href="#" class="link-list__link">Understanding sudden cardiac arrest</a></li>
+                  <li><a href="#" class="link-list__link">Risk factors and warning signs</a></li>
+                  <li><a href="#" class="link-list__link">CPR and AED resources</a></li>
+                  <li><a href="#" class="link-list__link">Support after sudden cardiac death in the family</a></li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="accordion__item">
+              <summary class="accordion__trigger">
+                <span class="accordion__icon" aria-hidden="true">◆</span>
+                Information about cardiac testing
+              </summary>
+              <div class="accordion__content">
+                <ul class="link-list">
+                  <li><a href="#" class="link-list__link">ECG and Holter monitoring</a></li>
+                  <li><a href="#" class="link-list__link">Echocardiogram overview</a></li>
+                  <li><a href="#" class="link-list__link">Electrophysiology (EP) study</a></li>
+                  <li><a href="#" class="link-list__link">Ablation and device therapy</a></li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="accordion__item">
+              <summary class="accordion__trigger">
+                <span class="accordion__icon" aria-hidden="true">◆</span>
+                Information about genetic testing
+              </summary>
+              <div class="accordion__content">
+                <ul class="link-list">
+                  <li><a href="#" class="link-list__link">Who should consider genetic testing</a></li>
+                  <li><a href="#" class="link-list__link">What to expect from testing</a></li>
+                  <li><a href="#" class="link-list__link">Understanding your results</a></li>
+                  <li><a href="#" class="link-list__link">Family screening guidance</a></li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="accordion__item">
+              <summary class="accordion__trigger">
+                <span class="accordion__icon" aria-hidden="true">◆</span>
+                See an expert
+              </summary>
+              <div class="accordion__content">
+                <ul class="link-list">
+                  <li><a href="#" class="link-list__link">Find a cardiac electrophysiologist</a></li>
+                  <li><a href="#" class="link-list__link">Arrhythmia clinic referrals</a></li>
+                  <li><a href="#" class="link-list__link">When to seek urgent care</a></li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="accordion__item">
+              <summary class="accordion__trigger">
+                <span class="accordion__icon" aria-hidden="true">◆</span>
+                Participate in a research study
+              </summary>
+              <div class="accordion__content">
+                <ul class="link-list">
+                  <li><a href="#" class="link-list__link">Current HiRO studies</a></li>
+                  <li><a href="#" class="link-list__link">Eligibility and enrollment</a></li>
+                  <li><a href="#" class="link-list__link">Contact the research team</a></li>
+                </ul>
+              </div>
+            </details>
+
+            <details class="accordion__item">
+              <summary class="accordion__trigger">
+                <span class="accordion__icon" aria-hidden="true">◆</span>
+                Additional resources
+              </summary>
+              <div class="accordion__content">
+                <ul class="link-list">
+                  <li><a href="#" class="link-list__link">Patient education handouts</a></li>
+                  <li><a href="#" class="link-list__link">Support groups and community</a></li>
+                  <li><a href="#" class="link-list__link">External partner organizations</a></li>
+                  <li><a href="#" class="link-list__link">Coping with a cardiac diagnosis</a></li>
+                  <li><a href="#" class="link-list__link">Anxiety, depression, and cardiac health</a></li>
+                  <li><a href="#" class="link-list__link">Peer and family support groups</a></li>
+                  <li><a href="#" class="link-list__link">Finding a counsellor or mental health provider</a></li>
+                </ul>
+              </div>
+            </details>
+          </div>
+        </section>
+
+        <!-- Messages -->
+        <section class="panel" id="panel-messages" role="tabpanel" aria-labelledby="tab-messages" hidden>
+          <h2 class="panel__heading">Messages</h2>
+          <p class="panel__intro">Secure communication with your HiRO care and research team.</p>
+          <ul class="message-list" id="message-list">
+            <li data-categories="genetics,arvc">
+              <details class="message-card">
+                <summary class="message-card__summary">
+                  <div class="message-card__header">
+                    <div class="message-card__badges">
+                      <span class="message-card__badge">Genetics</span>
+                      <span class="message-card__badge message-card__badge--secondary">ARVC</span>
+                    </div>
+                    <time class="message-card__date" datetime="2026-05-28">May 28, 2026</time>
+                  </div>
+                  <h3 class="message-card__subject">Update regarding your FLNC variant</h3>
+                  <p class="message-card__from">From: HiRO Genetics Team</p>
+                </summary>
+                <div class="message-card__body">
+                  <p>
+                    We are writing to let you know about a reclassification of a variant in the <strong>FLNC</strong> (filamin C) gene identified in your genetic testing. This variant has been updated from a variant of uncertain significance (VUS) to <strong>likely pathogenic</strong>, based on new evidence from recent research and family studies.
+                  </p>
+                  <p>
+                    FLNC-related conditions can affect the heart muscle and electrical system, and may increase the risk of arrhythmias or cardiomyopathy in some individuals. This change does not necessarily mean you will develop symptoms, but it may affect screening and follow-up recommendations for you and your family members.
+                  </p>
+                  <p>
+                    We recommend scheduling a follow-up appointment with your care team or a genetic counsellor to review these results in the context of your personal and family history. Please contact us if you have questions or would like to discuss cascade testing for relatives.
+                  </p>
+                </div>
+              </details>
+            </li>
+            <li data-categories="lqts">
+              <details class="message-card">
+                <summary class="message-card__summary">
+                  <div class="message-card__header">
+                    <div class="message-card__badges">
+                      <span class="message-card__badge">LQTS</span>
+                    </div>
+                    <time class="message-card__date" datetime="2026-05-20">May 20, 2026</time>
+                  </div>
+                  <h3 class="message-card__subject">LQTS screening reminder</h3>
+                  <p class="message-card__from">From: HiRO Care Team</p>
+                </summary>
+                <div class="message-card__body">
+                  <p>
+                    Based on your family history, we recommend completing your annual LQTS-related cardiac screening. Please contact your clinic to schedule an ECG and review any new symptoms with your care team.
+                  </p>
+                </div>
+              </details>
+            </li>
+            <li data-categories="hiroNews">
+              <details class="message-card">
+                <summary class="message-card__summary">
+                  <div class="message-card__header">
+                    <div class="message-card__badges">
+                      <span class="message-card__badge">HiRO News</span>
+                    </div>
+                    <time class="message-card__date" datetime="2026-06-01">June 1, 2026</time>
+                  </div>
+                  <h3 class="message-card__subject">10th Annual HiRO Symposium registration</h3>
+                  <p class="message-card__from">From: HiRO Communications</p>
+                </summary>
+                <div class="message-card__body">
+                  <p>
+                    Registration for the 10th Annual HiRO Symposium will open soon. Save the date and watch for program details and speaker announcements in the News tab.
+                  </p>
+                </div>
+              </details>
+            </li>
+            <li data-categories="icd">
+              <details class="message-card">
+                <summary class="message-card__summary">
+                  <div class="message-card__header">
+                    <div class="message-card__badges">
+                      <span class="message-card__badge">ICD</span>
+                    </div>
+                    <time class="message-card__date" datetime="2026-05-10">May 10, 2026</time>
+                  </div>
+                  <h3 class="message-card__subject">ICD device check follow-up</h3>
+                  <p class="message-card__from">From: Device Clinic</p>
+                </summary>
+                <div class="message-card__body">
+                  <p>
+                    Your recent ICD remote transmission has been reviewed. No urgent issues were identified. Continue your usual follow-up schedule and contact the device clinic if you experience shocks, palpitations, or wound concerns.
+                  </p>
+                </div>
+              </details>
+            </li>
+          </ul>
+          <p class="message-list__empty" id="message-list-empty" hidden>
+            No messages in your selected categories. Update message categories in Settings to see more.
+          </p>
+        </section>
+
+        <!-- Settings -->
+        <section class="panel" id="panel-settings" role="tabpanel" aria-labelledby="tab-settings" hidden>
+          <h2 class="panel__heading">Settings</h2>
+          <p class="panel__intro">Manage your profile and app preferences.</p>
+          <form class="settings-form" id="settings-form">
+            <fieldset class="settings-group">
+              <legend class="settings-group__legend">Profile</legend>
+              <label class="field">
+                <span class="field__label">Display name</span>
+                <span class="field__optional">(optional)</span>
+                <input class="field__input" type="text" name="displayName" placeholder="Your name" autocomplete="name" />
+              </label>
+              <label class="field">
+                <span class="field__label">Email</span>
+                <span class="field__optional">(optional)</span>
+                <input class="field__input" type="email" name="email" placeholder="you@example.com" autocomplete="email" />
+              </label>
+              <label class="field">
+                <span class="field__label">Registry ID</span>
+                <span class="field__optional">(optional)</span>
+                <input class="field__input" type="text" name="registryId" placeholder="Your registry ID" autocomplete="off" spellcheck="false" />
+              </label>
+            </fieldset>
+            <fieldset class="settings-group">
+              <legend class="settings-group__legend">Message categories</legend>
+              <p class="settings-group__hint">Search and select categories to subscribe to. Your subscribed categories appear below.</p>
+              <div class="category-picker">
+                <p class="category-picker__label">Subscribed categories</p>
+                <div class="category-bubbles category-bubbles--subscribed" id="category-subscribed" aria-live="polite"></div>
+                <p class="category-picker__empty" id="category-subscribed-empty" hidden>
+                  No categories selected. Search below to add categories.
+                </p>
+                <label class="category-search">
+                  <span class="category-search__label">Search categories</span>
+                  <input
+                    type="search"
+                    class="category-search__input"
+                    id="category-search"
+                    placeholder="Search conditions, topics, events…"
+                    autocomplete="off"
+                    enterkeyhint="search"
+                  />
+                </label>
+                <p class="category-picker__label category-picker__label--available">Add categories</p>
+                <div class="category-bubbles category-bubbles--available" id="category-available"></div>
+                <p class="category-picker__empty" id="category-available-empty" hidden>
+                  No categories match your search.
+                </p>
+              </div>
+            </fieldset>
+            <fieldset class="settings-group">
+              <legend class="settings-group__legend">Notifications</legend>
+              <label class="toggle">
+                <input type="checkbox" name="newsAlerts" checked />
+                <span class="toggle__track"></span>
+                <span class="toggle__label">News and announcements</span>
+              </label>
+              <label class="toggle">
+                <input type="checkbox" name="messageAlerts" checked />
+                <span class="toggle__track"></span>
+                <span class="toggle__label">New messages</span>
+              </label>
+              <label class="toggle">
+                <input type="checkbox" name="studyAlerts" />
+                <span class="toggle__track"></span>
+                <span class="toggle__label">Research study updates</span>
+              </label>
+            </fieldset>
+            <button type="submit" class="btn btn--primary">Save preferences</button>
+            <p class="settings-note" id="settings-saved" hidden role="status">Preferences saved locally on this device.</p>
+          </form>
+        </section>
+      </main>
+
+      <nav class="tab-bar" role="tablist" aria-label="Main navigation">
+        <button type="button" class="tab-bar__btn tab-bar__btn--active" role="tab" id="tab-news" aria-selected="true" aria-controls="panel-news" data-tab="news">
+          <span class="tab-bar__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+          </span>
+          <span class="tab-bar__label">News</span>
+        </button>
+        <button type="button" class="tab-bar__btn" role="tab" id="tab-resources" aria-selected="false" aria-controls="panel-resources" data-tab="resources">
+          <span class="tab-bar__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </span>
+          <span class="tab-bar__label">Resources</span>
+        </button>
+        <button type="button" class="tab-bar__btn" role="tab" id="tab-messages" aria-selected="false" aria-controls="panel-messages" data-tab="messages" hidden>
+          <span class="tab-bar__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </span>
+          <span class="tab-bar__label">Messages</span>
+        </button>
+        <button type="button" class="tab-bar__btn" role="tab" id="tab-settings" aria-selected="false" aria-controls="panel-settings" data-tab="settings">
+          <span class="tab-bar__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </span>
+          <span class="tab-bar__label">Settings</span>
+        </button>
+      </nav>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
