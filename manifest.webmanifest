@@ -1,0 +1,19 @@
+{
+  "name": "HiRO — Hearts in Rhythm Organization",
+  "short_name": "HiRO",
+  "description": "Research, resources, and community for cardiac rhythm health.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ececee",
+  "theme_color": "#8b1a2e",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "HiRO Circle Logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

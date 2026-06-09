@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content="Hearts in Rhythm Organization — research, resources, and community for cardiac rhythm health." />
     <meta name="theme-color" content="#8b1a2e" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="HiRO" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="HiRO Circle Logo.png" />
     <title>HiRO — Hearts in Rhythm Organization</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -413,6 +417,10 @@
                 <span class="toggle__track"></span>
                 <span class="toggle__label">Research study updates</span>
               </label>
+              <p class="push-status" id="push-status" role="status"></p>
+              <button type="button" class="btn btn--secondary" id="push-copy-subscription" hidden>
+                Copy push subscription for admin
+              </button>
             </fieldset>
             <button type="submit" class="btn btn--primary">Save preferences</button>
             <p class="settings-note" id="settings-saved" hidden role="status">Preferences saved locally on this device.</p>
@@ -447,6 +455,8 @@
         </button>
       </nav>
     </div>
+    <script src="push-config.js"></script>
+    <script src="push.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

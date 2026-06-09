@@ -1,0 +1,12 @@
+{
+  "name": "hiro-push-server",
+  "private": true,
+  "description": "Send Web Push notifications to HiRO app subscribers",
+  "scripts": {
+    "setup": "node setup-vapid.js",
+    "send": "node send-push.js"
+  },
+  "dependencies": {
+    "web-push": "^3.6.7"
+  }
+}

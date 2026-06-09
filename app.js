@@ -324,13 +324,19 @@ function loadSettings() {
   filterMessagesByCategory();
 }
 
-function saveSettings(e) {
+async function saveSettings(e) {
   e.preventDefault();
   const data = getFormSettings();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   applySettingsToForm(data);
   updateMessagesTabVisibility();
   filterMessagesByCategory();
+
+  if (window.HiroPush) {
+    const pushResult = await window.HiroPush.syncPushWithSettings(data);
+    updatePushStatusUI(pushResult);
+  }
+
   settingsSaved.hidden = false;
   setTimeout(() => {
     settingsSaved.hidden = true;
@@ -344,7 +350,50 @@ if (categorySearch) {
   categorySearch.addEventListener("search", renderCategoryPicker);
 }
 
+const pushStatusEl = document.getElementById("push-status");
+const pushCopySubscriptionBtn = document.getElementById("push-copy-subscription");
+
+function updatePushStatusUI(pushResult) {
+  if (!pushStatusEl || !window.HiroPush) return;
+
+  pushStatusEl.textContent = window.HiroPush.getPushStatusMessage();
+
+  if (pushResult?.reason === "denied") {
+    pushStatusEl.textContent =
+      "Notifications are blocked. Enable them in your browser or phone settings, then save again.";
+  }
+
+  const hasSubscription = Boolean(window.HiroPush.getLocalSubscriptionJson());
+  if (pushCopySubscriptionBtn) {
+    pushCopySubscriptionBtn.hidden = !hasSubscription;
+  }
+}
+
+if (pushCopySubscriptionBtn) {
+  pushCopySubscriptionBtn.addEventListener("click", async () => {
+    const subscription = window.HiroPush?.getLocalSubscriptionJson();
+    if (!subscription) return;
+
+    const json = JSON.stringify(subscription, null, 2);
+
+    try {
+      await navigator.clipboard.writeText(json);
+      pushCopySubscriptionBtn.textContent = "Copied!";
+      setTimeout(() => {
+        pushCopySubscriptionBtn.textContent = "Copy push subscription for admin";
+      }, 2000);
+    } catch {
+      prompt("Copy this subscription JSON into push-server/subscriptions.json:", json);
+    }
+  });
+}
+
+if (window.HiroPush) {
+  window.HiroPush.registerServiceWorker().then(() => updatePushStatusUI());
+}
+
 loadSettings();
+updatePushStatusUI();
 
 /* News — pull to refresh & last updated */
 const mainContent = document.getElementById("main-content");

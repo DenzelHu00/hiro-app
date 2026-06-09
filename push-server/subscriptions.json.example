@@ -1,0 +1,10 @@
+[
+  {
+    "endpoint": "https://fcm.googleapis.com/fcm/send/example…",
+    "expirationTime": null,
+    "keys": {
+      "p256dh": "example",
+      "auth": "example"
+    }
+  }
+]
