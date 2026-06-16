@@ -102,12 +102,17 @@ body::before {
 .app {
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
+  /* Fixed-height app shell so .main is the single scroll container instead of
+     the document body. This keeps mainContent.scrollTop meaningful (needed for
+     pull-to-refresh) and gives Android reliable single-finger scrolling. */
+  height: 100vh;
+  height: 100dvh;
   max-width: 480px;
   margin: 0 auto;
   background: transparent;
   box-shadow: var(--shadow-md);
   position: relative;
+  overflow: hidden;
 }
 
 @media (min-width: 481px) {
@@ -126,7 +131,7 @@ body::before {
   }
 
   .app {
-    min-height: calc(100dvh - 3.5rem);
+    height: calc(100dvh - 3.5rem);
     border-radius: var(--radius-lg);
     overflow: hidden;
     background: rgba(255, 255, 255, 0.76);
@@ -195,6 +200,11 @@ body::before {
   -webkit-overflow-scrolling: touch;
   background: transparent;
   overscroll-behavior-y: contain;
+  /* Let the browser handle single-finger vertical scrolling on its own
+     (compositor) thread. Without this, Android browsers wait on the
+     non-passive touchmove listener before scrolling, which makes single-finger
+     scrolling unreliable (Samsung: only scrolls with two fingers / half the time). */
+  touch-action: pan-y;
 }
 
 .panel {

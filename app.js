@@ -647,7 +647,16 @@ mainContent.addEventListener(
     if (!pullTracking || getActiveTab() !== "news" || isRefreshingNews) return;
     const distance = e.touches[0].clientY - pullStartY;
     if (distance > 0 && mainContent.scrollTop <= 0) {
-      if (distance > 10) e.preventDefault();
+      if (distance > 10) {
+        // If the browser has already committed to scrolling, the event is no
+        // longer cancelable — stop the pull gesture and let it scroll natively
+        // instead of fighting it (which causes janky/inconsistent scrolling).
+        if (!e.cancelable) {
+          resetPullIndicator();
+          return;
+        }
+        e.preventDefault();
+      }
       updatePullIndicator(distance);
     } else if (distance <= 0) {
       resetPullIndicator();
