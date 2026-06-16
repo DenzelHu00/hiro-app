@@ -761,25 +761,44 @@ function setupDetailsAnimation(details, contentSelector, onOpen) {
     if (isAnimating) return;
     isAnimating = true;
 
+    // Resolve once the height transition ends. A timeout fallback guarantees
+    // the flag is reset even if transitionend never fires (e.g. when the
+    // browser hides the <details> content and cancels the transition), so the
+    // card can always be toggled again.
+    function whenDone(durationMs, cleanup) {
+      let settled = false;
+      function finish() {
+        if (settled) return;
+        settled = true;
+        content.removeEventListener("transitionend", onEnd);
+        clearTimeout(timer);
+        cleanup();
+        isAnimating = false;
+      }
+      function onEnd(ev) {
+        if (ev.propertyName !== "height") return;
+        finish();
+      }
+      content.addEventListener("transitionend", onEnd);
+      const timer = setTimeout(finish, durationMs + 50);
+    }
+
     if (details.open) {
+      // Keep the element open while it animates closed so the browser does not
+      // hide the content (which would cancel the transition) before it ends.
       const h = content.scrollHeight;
-      content.style.display = "block";
       content.style.overflow = "hidden";
       content.style.height = h + "px";
-      details.open = false;
       void content.offsetHeight;
 
       content.style.transition = `height 220ms ${EASE}, opacity 180ms ease-out`;
       content.style.height = "0";
       content.style.opacity = "0";
 
-      function onClose(ev) {
-        if (ev.propertyName !== "height") return;
-        content.removeEventListener("transitionend", onClose);
+      whenDone(220, () => {
+        details.open = false;
         content.style.cssText = "";
-        isAnimating = false;
-      }
-      content.addEventListener("transitionend", onClose);
+      });
     } else {
       details.open = true;
       if (onOpen) onOpen();
@@ -793,13 +812,9 @@ function setupDetailsAnimation(details, contentSelector, onOpen) {
       content.style.height = h + "px";
       content.style.opacity = "1";
 
-      function onOpenEnd(ev) {
-        if (ev.propertyName !== "height") return;
-        content.removeEventListener("transitionend", onOpenEnd);
+      whenDone(300, () => {
         content.style.cssText = "";
-        isAnimating = false;
-      }
-      content.addEventListener("transitionend", onOpenEnd);
+      });
     }
   });
 }
