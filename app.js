@@ -4,6 +4,8 @@
  */
 
 const STORAGE_KEY = "hiro-settings";
+const MESSAGES_READ_KEY = "hiro-messages-read";
+const MESSAGES_READ_IDS_KEY = "hiro-messages-read-ids";
 
 const MESSAGE_CATEGORIES = [
   { key: "genetics", label: "Genetics" },
@@ -228,6 +230,7 @@ function filterMessagesByCategory() {
   if (messageListEmpty) {
     messageListEmpty.hidden = visibleCount > 0;
   }
+  updateMessagesBadge();
 }
 
 function hasMessagesAccess() {
@@ -289,6 +292,7 @@ function switchTab(tabId, options = {}) {
   document.getElementById(`tab-${tabId}`)?.focus({ preventScroll: true });
 
   if (tabId === "messages") {
+    markMessagesRead();
     filterMessagesByCategory();
   }
 }
@@ -348,6 +352,77 @@ settingsForm.addEventListener("submit", saveSettings);
 if (categorySearch) {
   categorySearch.addEventListener("input", renderCategoryPicker);
   categorySearch.addEventListener("search", renderCategoryPicker);
+}
+
+const messagesBadgeEl = document.getElementById("messages-badge");
+
+function getUnreadMessageCount() {
+  if (!messageList) return 0;
+  const lastRead = localStorage.getItem(MESSAGES_READ_KEY);
+  const cutoff = lastRead ? new Date(lastRead) : new Date(0);
+  let count = 0;
+  messageList.querySelectorAll("li[data-categories]").forEach((item) => {
+    if (item.hidden) return;
+    const timeEl = item.querySelector("time[datetime]");
+    if (!timeEl) return;
+    if (new Date(timeEl.getAttribute("datetime")) > cutoff) count++;
+  });
+  return count;
+}
+
+function updateMessagesBadge() {
+  if (!messagesBadgeEl) return;
+  const count = getUnreadMessageCount();
+  if (count > 0) {
+    const label = count > 9 ? "9+" : String(count);
+    if (messagesBadgeEl.textContent !== label) {
+      messagesBadgeEl.textContent = label;
+    }
+    if (messagesBadgeEl.hidden) {
+      messagesBadgeEl.hidden = false;
+    }
+    messagesTabBtn.setAttribute("aria-label", `Messages, ${count} unread`);
+  } else {
+    messagesBadgeEl.hidden = true;
+    messagesTabBtn.removeAttribute("aria-label");
+  }
+}
+
+function markMessagesRead() {
+  localStorage.setItem(MESSAGES_READ_KEY, new Date().toISOString());
+  if (messagesBadgeEl) messagesBadgeEl.hidden = true;
+  messagesTabBtn.removeAttribute("aria-label");
+}
+
+function getReadMessageIds() {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(MESSAGES_READ_IDS_KEY) || "[]"));
+  } catch {
+    return new Set();
+  }
+}
+
+function markMessageCardRead(card) {
+  const timeEl = card.querySelector("time[datetime]");
+  const subjectEl = card.querySelector(".message-card__subject");
+  if (!timeEl || !subjectEl) return;
+  const id = `${timeEl.getAttribute("datetime")}:${subjectEl.textContent.trim()}`;
+  const ids = getReadMessageIds();
+  if (ids.has(id)) return;
+  ids.add(id);
+  localStorage.setItem(MESSAGES_READ_IDS_KEY, JSON.stringify([...ids]));
+  card.classList.add("is-read");
+}
+
+function applyReadStateToCards() {
+  const ids = getReadMessageIds();
+  document.querySelectorAll(".message-card").forEach((card) => {
+    const timeEl = card.querySelector("time[datetime]");
+    const subjectEl = card.querySelector(".message-card__subject");
+    if (!timeEl || !subjectEl) return;
+    const id = `${timeEl.getAttribute("datetime")}:${subjectEl.textContent.trim()}`;
+    if (ids.has(id)) card.classList.add("is-read");
+  });
 }
 
 const pushStatusEl = document.getElementById("push-status");
@@ -438,9 +513,41 @@ async function initPushNotifications() {
 loadSettings();
 initPushNotifications();
 
+/* Theme — dark mode toggle */
+const THEME_KEY = "hiro-theme";
+const darkModeToggle = document.getElementById("dark-mode-toggle");
+const systemDarkMQ = window.matchMedia("(prefers-color-scheme: dark)");
+
+function applyTheme(theme) {
+  const isDark = theme === "dark" || (theme !== "light" && systemDarkMQ.matches);
+  document.documentElement.classList.toggle("theme-dark", isDark);
+  if (darkModeToggle) darkModeToggle.checked = isDark;
+}
+
+function loadTheme() {
+  applyTheme(localStorage.getItem(THEME_KEY) || "system");
+}
+
+if (darkModeToggle) {
+  darkModeToggle.addEventListener("change", () => {
+    const theme = darkModeToggle.checked ? "dark" : "light";
+    localStorage.setItem(THEME_KEY, theme);
+    applyTheme(theme);
+  });
+}
+
+systemDarkMQ.addEventListener("change", () => {
+  if (!localStorage.getItem(THEME_KEY) || localStorage.getItem(THEME_KEY) === "system") {
+    applyTheme("system");
+  }
+});
+
+loadTheme();
+
 /* News — pull to refresh & last updated */
 const mainContent = document.getElementById("main-content");
 const newsLastUpdated = document.getElementById("news-last-updated");
+const newsListEl = document.getElementById("news-list");
 const newsPullIndicator = document.getElementById("news-pull-indicator");
 const newsPullLabel = document.getElementById("news-pull-label");
 const PULL_THRESHOLD = 72;
@@ -480,15 +587,42 @@ function updatePullIndicator(distance) {
     clamped >= PULL_THRESHOLD ? "Release to refresh" : "Pull down to refresh";
 }
 
+function buildNewsSkeleton() {
+  const li = document.createElement("li");
+  li.className = "news-card--skeleton";
+  li.setAttribute("aria-hidden", "true");
+  li.innerHTML = `
+    <div class="news-card__skel-line news-card__skel-line--date"></div>
+    <div class="news-card__skel-line news-card__skel-line--title"></div>
+    <div class="news-card__skel-line news-card__skel-line--title-short"></div>
+    <div class="news-card__skel-line"></div>
+    <div class="news-card__skel-line"></div>
+    <div class="news-card__skel-line news-card__skel-line--short"></div>
+  `;
+  return li;
+}
+
 function refreshNews() {
   if (isRefreshingNews) return Promise.resolve();
   isRefreshingNews = true;
   newsPullIndicator.classList.add("is-visible", "is-refreshing");
   newsPullLabel.textContent = "Updating…";
 
+  const realCards = [...newsListEl.querySelectorAll(".news-card")];
+  realCards.forEach((card) => { card.style.display = "none"; });
+  const delays = [0, 80, 140];
+  const skeletons = realCards.map((_, i) => {
+    const skel = buildNewsSkeleton();
+    skel.style.animationDelay = `${delays[i] ?? 160}ms`;
+    newsListEl.appendChild(skel);
+    return skel;
+  });
+
   return new Promise((resolve) => {
     setTimeout(() => {
       setNewsLastUpdated(new Date());
+      skeletons.forEach((skel) => skel.remove());
+      realCards.forEach((card) => { card.style.display = ""; });
       resetPullIndicator();
       isRefreshingNews = false;
       resolve();
@@ -546,6 +680,46 @@ const resourceAccordionItems = document.querySelectorAll(
   "#resources-accordion > .accordion__item"
 );
 
+const accordionTriggerTexts = new Map();
+resourceAccordionItems.forEach((item) => {
+  const trigger = item.querySelector(".accordion__trigger");
+  if (!trigger) return;
+  const textNode = [...trigger.childNodes].find(
+    (n) => n.nodeType === Node.TEXT_NODE && n.textContent.trim()
+  );
+  if (textNode) accordionTriggerTexts.set(item, textNode.textContent.trim());
+});
+
+function highlightTrigger(item, query) {
+  const trigger = item.querySelector(".accordion__trigger");
+  if (!trigger) return;
+  const originalText = accordionTriggerTexts.get(item);
+  if (!originalText) return;
+
+  const existing = trigger.querySelector(".search-highlight-wrap");
+  if (existing) existing.replaceWith(document.createTextNode(originalText));
+
+  if (!query) return;
+
+  const idx = originalText.toLowerCase().indexOf(query);
+  if (idx < 0) return;
+
+  const textNode = [...trigger.childNodes].find(
+    (n) => n.nodeType === Node.TEXT_NODE && n.textContent.trim()
+  );
+  if (!textNode) return;
+
+  const wrap = document.createElement("span");
+  wrap.className = "search-highlight-wrap";
+  wrap.appendChild(document.createTextNode(originalText.slice(0, idx)));
+  const mark = document.createElement("mark");
+  mark.className = "search-highlight";
+  mark.textContent = originalText.slice(idx, idx + query.length);
+  wrap.appendChild(mark);
+  wrap.appendChild(document.createTextNode(originalText.slice(idx + query.length)));
+  textNode.replaceWith(wrap);
+}
+
 function filterResources() {
   const query = resourceSearch.value.trim().toLowerCase();
   let visibleCount = 0;
@@ -554,6 +728,7 @@ function filterResources() {
     const text = item.textContent.toLowerCase();
     const matches = !query || text.includes(query);
     item.classList.toggle("is-search-hidden", !matches);
+    highlightTrigger(item, query);
     if (matches) visibleCount += 1;
   });
 
@@ -562,6 +737,82 @@ function filterResources() {
 
 resourceSearch.addEventListener("input", filterResources);
 resourceSearch.addEventListener("search", filterResources);
+
+/* Animate <details> open/close for accordion items and message cards */
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const EASE = "cubic-bezier(0.23, 1, 0.32, 1)";
+
+function setupDetailsAnimation(details, contentSelector, onOpen) {
+  const summary = details.querySelector("summary");
+  const content = details.querySelector(contentSelector);
+  if (!summary || !content) return;
+
+  let isAnimating = false;
+
+  summary.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    if (prefersReducedMotion) {
+      details.open = !details.open;
+      if (details.open && onOpen) onOpen();
+      return;
+    }
+
+    if (isAnimating) return;
+    isAnimating = true;
+
+    if (details.open) {
+      const h = content.scrollHeight;
+      content.style.display = "block";
+      content.style.overflow = "hidden";
+      content.style.height = h + "px";
+      details.open = false;
+      void content.offsetHeight;
+
+      content.style.transition = `height 220ms ${EASE}, opacity 180ms ease-out`;
+      content.style.height = "0";
+      content.style.opacity = "0";
+
+      function onClose(ev) {
+        if (ev.propertyName !== "height") return;
+        content.removeEventListener("transitionend", onClose);
+        content.style.cssText = "";
+        isAnimating = false;
+      }
+      content.addEventListener("transitionend", onClose);
+    } else {
+      details.open = true;
+      if (onOpen) onOpen();
+      const h = content.scrollHeight;
+      content.style.overflow = "hidden";
+      content.style.height = "0";
+      content.style.opacity = "0";
+      void content.offsetHeight;
+
+      content.style.transition = `height 300ms ${EASE}, opacity 240ms ease-out`;
+      content.style.height = h + "px";
+      content.style.opacity = "1";
+
+      function onOpenEnd(ev) {
+        if (ev.propertyName !== "height") return;
+        content.removeEventListener("transitionend", onOpenEnd);
+        content.style.cssText = "";
+        isAnimating = false;
+      }
+      content.addEventListener("transitionend", onOpenEnd);
+    }
+  });
+}
+
+document.querySelectorAll("#resources-accordion > .accordion__item").forEach((el) => {
+  setupDetailsAnimation(el, ".accordion__content");
+});
+
+document.querySelectorAll(".message-card").forEach((el) => {
+  setupDetailsAnimation(el, ".message-card__body", () => markMessageCardRead(el));
+});
+
+applyReadStateToCards();
 
 document.querySelectorAll(".link-list__link[href='#']").forEach((link) => {
   link.addEventListener("click", (e) => {
