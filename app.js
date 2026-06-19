@@ -3,6 +3,18 @@
  * Tab navigation and local settings persistence
  */
 
+/* Splash — remove from DOM after animation completes */
+(function () {
+  var splash = document.getElementById('splash');
+  if (!splash) return;
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) {
+    setTimeout(function () { splash.remove(); }, 1100);
+  } else {
+    splash.addEventListener('animationend', function () { splash.remove(); }, { once: true });
+  }
+}());
+
 const STORAGE_KEY = "hiro-settings";
 const MESSAGES_READ_KEY = "hiro-messages-read";
 const MESSAGES_READ_IDS_KEY = "hiro-messages-read-ids";
