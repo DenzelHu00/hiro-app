@@ -11,7 +11,11 @@
   if (reduced) {
     setTimeout(function () { splash.remove(); }, 1100);
   } else {
-    splash.addEventListener('animationend', function () { splash.remove(); }, { once: true });
+    var remove = function () { splash.remove(); };
+    splash.addEventListener('animationend', remove, { once: true });
+    // Fallback in case animationend never fires (e.g. iOS backgrounding the
+    // page mid-animation), so the splash can't get stuck on screen forever.
+    setTimeout(remove, 3500);
   }
 }());
 
@@ -516,7 +520,11 @@ async function initPushNotifications() {
   if (!window.HiroPush) return;
   await window.HiroPush.registerServiceWorker();
   const saved = getSavedSettings();
-  if (window.HiroPush.wantsAnyNotifications(saved) && Notification.permission === "granted") {
+  if (
+    window.HiroPush.isPushSupported() &&
+    window.HiroPush.wantsAnyNotifications(saved) &&
+    Notification.permission === "granted"
+  ) {
     await window.HiroPush.syncPushWithSettings(saved);
   }
   await updatePushStatusUI();
